@@ -90,15 +90,18 @@ input[type="range"] {
   color: #b3b8c1; /* Slightly muted text */
 }
 
-/* Button Styling */
+/* Ensure the action buttons have the same width as the tab-wrap */
 .action-button {
-  padding: 10px 20px;
-  background-color: #3a90e2; /* Darker blue for dark theme */
+  width: 100%; /* Full width */
+  padding: 10px 0; /* Adjust padding if necessary */
+  background-color: #3a90e2; /* Keep the same background color */
   color: white;
   border: none;
   cursor: pointer;
   margin-top: 10px;
   transition: background-color 0.3s ease;
+  text-align: center; /* Center the text within the button */
+  font-size: 16px; /* Adjust font size for better readability */
 }
 
 .action-button:hover {
