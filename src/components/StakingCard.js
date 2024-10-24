@@ -55,131 +55,129 @@ const StakingCard = () => {
   }, [amount]);
 
   return (
-    <div className="container">
-      <div className="tab-wrap">
-        <input
-          type="radio"
-          id="tab1"
-          name="tabGroup1"
-          className="tab"
-          checked={tab === "deposit"}
-          onChange={() => handleTabChange("deposit")}
-        />
-        <label htmlFor="tab1">Deposit</label>
+    <div className="tab-wrap">
+      <input
+        type="radio"
+        id="tab1"
+        name="tabGroup1"
+        className="tab"
+        checked={tab === "deposit"}
+        onChange={() => handleTabChange("deposit")}
+      />
+      <label htmlFor="tab1">Deposit</label>
 
-        <input
-          type="radio"
-          id="tab2"
-          name="tabGroup1"
-          className="tab"
-          checked={tab === "withdraw"}
-          onChange={() => handleTabChange("withdraw")}
-        />
-        <label htmlFor="tab2">Withdraw</label>
+      <input
+        type="radio"
+        id="tab2"
+        name="tabGroup1"
+        className="tab"
+        checked={tab === "withdraw"}
+        onChange={() => handleTabChange("withdraw")}
+      />
+      <label htmlFor="tab2">Withdraw</label>
 
-        {/* Deposit Content */}
-        {tab === "deposit" && (
-          <div className="tab__content">
-            <div className="tab-header">
-              <p className="label">You Deposit</p>
-              <div onClick={handleMaxClick} className="max-button">
-                Use MAX
-              </div>
+      {/* Deposit Content */}
+      {tab === "deposit" && (
+        <div className="tab__content">
+          <div className="tab-header">
+            <p className="label">You Deposit</p>
+            <div onClick={handleMaxClick} className="max-button">
+              Use MAX
             </div>
-            <h1>
-              <div className="input-container">
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  placeholder="Enter amount"
-                  min="0"
-                  max={balance}
-                />
-                <span className="currency">in GAME</span>
-              </div>
-            </h1>
-            <div className="slider">
+          </div>
+          <h1>
+            <div className="input-container">
               <input
-                type="range"
-                min="0"
-                max={balance}
-                step="0.01"
+                type="number"
                 value={amount}
                 onChange={handleAmountChange}
-              />
-              <div className="slider-progress">
-                <div className="slider-thumb"></div>
-              </div>
-            </div>
-            <p>Selected: {amount} TON</p>
-
-            <div className="staking-info">
-              <p>Balance: {balance} TON</p>
-            </div>
-
-            <button
-              onClick={handleActionClick}
-              className="action-button"
-              disabled={amount < 1}
-            >
-              Deposit Game Token
-            </button>
-          </div>
-        )}
-
-        {/* Withdraw Content */}
-        {tab === "withdraw" && (
-          <div className="tab__content">
-            <div className="tab-header">
-              <p className="label">You Withdraw</p>
-              <div onClick={handleMaxClick} className="max-button">
-                Use MAX
-              </div>
-            </div>
-
-            <h1>
-              <div className="input-container">
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  placeholder="Enter amount"
-                  min="0"
-                  max={balance}
-                />
-                <span className="currency">in GAME</span>
-              </div>
-            </h1>
-            <div className="slider">
-              <input
-                type="range"
+                placeholder="Enter amount"
                 min="0"
                 max={balance}
-                step="0.01"
+              />
+              <span className="currency">in GAME</span>
+            </div>
+          </h1>
+          <div className="slider">
+            <input
+              type="range"
+              min="0"
+              max={balance}
+              step="0.01"
+              value={amount}
+              onChange={handleAmountChange}
+            />
+            <div className="slider-progress">
+              <div className="slider-thumb"></div>
+            </div>
+          </div>
+          <p>Selected: {amount} TON</p>
+
+          <div className="staking-info">
+            <p>Balance: {balance} TON</p>
+          </div>
+
+          <button
+            onClick={handleActionClick}
+            className="action-button"
+            disabled={amount < 1}
+          >
+            Deposit Game Token
+          </button>
+        </div>
+      )}
+
+      {/* Withdraw Content */}
+      {tab === "withdraw" && (
+        <div className="tab__content">
+          <div className="tab-header">
+            <p className="label">You Withdraw</p>
+            <div onClick={handleMaxClick} className="max-button">
+              Use MAX
+            </div>
+          </div>
+
+          <h1>
+            <div className="input-container">
+              <input
+                type="number"
                 value={amount}
                 onChange={handleAmountChange}
+                placeholder="Enter amount"
+                min="0"
+                max={balance}
               />
-              <div className="slider-progress">
-                <div className="slider-thumb"></div>
-              </div>
+              <span className="currency">in GAME</span>
             </div>
-            <p>Selected: {amount} TON</p>
-
-            <div className="staking-info">
-              <p>Balance: {balance} TON</p>
+          </h1>
+          <div className="slider">
+            <input
+              type="range"
+              min="0"
+              max={balance}
+              step="0.01"
+              value={amount}
+              onChange={handleAmountChange}
+            />
+            <div className="slider-progress">
+              <div className="slider-thumb"></div>
             </div>
-
-            <button
-              onClick={handleActionClick}
-              className="action-button"
-              disabled={amount < 1}
-            >
-              Withdraw Game Token
-            </button>
           </div>
-        )}
-      </div>
+          <p>Selected: {amount} TON</p>
+
+          <div className="staking-info">
+            <p>Balance: {balance} TON</p>
+          </div>
+
+          <button
+            onClick={handleActionClick}
+            className="action-button"
+            disabled={amount < 1}
+          >
+            Withdraw Game Token
+          </button>
+        </div>
+      )}
     </div>
   );
 };
