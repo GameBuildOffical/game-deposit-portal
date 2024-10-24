@@ -9,36 +9,51 @@ body {
 
 /* Top Bar Styles */
 .top-bar {
-  background-color: transparent;
+  background-color: transparent; /* Transparent background */
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  align-items: center;
+  justify-content: space-between; /* Space out the title and button group */
+  align-items: center; /* Center the items vertically */
+  padding: 15px 20px; /* Add padding for spacing */
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 999; /* Ensure the top bar stays on top */
+  z-index: 999; /* Ensure it stays on top */
 }
 
+/* Style the title in the top-bar */
+.top-bar-title {
+  font-size: 1.5rem; /* Slightly larger title */
+  font-weight: 600; /* Bold to make it stand out */
+  color: #ffffff; /* Light color to contrast with the transparent background */
+}
+
+/* Button group styles */
 .button-group {
   display: flex;
-  gap: 10px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  gap: 15px; /* Spacing between buttons */
+  padding-right: 20px; /* Add space on the right to prevent the button from crossing the edge */
+  background-color: transparent;
 }
 
-.button-1,
-.button-2 {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 20px;
+/* Adjust the w3m-button to be smaller */
+w3m-button {
+  background-color: transparent; /* Blue color for consistency */
+  color: #953333; /* Light text color */
   border: none;
+  padding: 6px 12px; /* Smaller padding to reduce the size */
+  border-radius: 4px;
+  font-size: 0.875rem; /* Slightly smaller font size */
   cursor: pointer;
+  /* transition: background-color 0.3s ease; */
 }
 
-.button-2 {
-  background-color: #008cba;
+/* Hover effect for the button */
+/* w3m-button:hover {
+  background-color: #357abd; 
+} */
+
+w3m-modal {
+  z-index: 120 !important; /* Ensure the modal is above other elements */
 }
 
 /* Staking Page Styles */
@@ -65,7 +80,7 @@ body {
 }
 
 h2 {
-  color: #333;
+  color: #66bcd9;
 }
 
 .staking-form input {

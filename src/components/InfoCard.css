@@ -1,0 +1,44 @@
+.info-card {
+  background-color: #2b2f36; /* Dark background to match the theme */
+  border-radius: 8px;
+  max-width: 460px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  margin-bottom: 20px;
+}
+
+.info-card-title {
+  color: #66bcd9;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.card {
+  background-color: #353a41; /* Darker background inside the card */
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.protocol-details {
+  display: flex;
+  justify-content: space-between;
+}
+
+.protocol-details-point {
+  text-align: center;
+}
+
+.loader {
+  color: #ffffff; /* White text for number display */
+}
+
+.text-h3 {
+  font-size: 1.5rem;
+  color: #ffffff; /* White text */
+  font-weight: 700;
+}
+
+.text-subtitle {
+  font-size: 1rem;
+  color: #cfd6e0; /* Light gray for subtitles */
+}

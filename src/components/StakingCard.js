@@ -23,10 +23,10 @@ const StakingCard = () => {
 
   const handleActionClick = () => {
     if (tab === "deposit") {
-      alert(`You have deposited ${amount} TON.`);
+      alert(`You have deposited ${amount} GAME.`);
       // Logic for deposit
     } else {
-      alert(`You have withdrawn ${amount} TON.`);
+      alert(`You have withdrawn ${amount} GAME.`);
       // Logic for withdraw
     }
   };
@@ -125,10 +125,9 @@ const StakingCard = () => {
               <div className="slider-thumb"></div>
             </div>
           </div>
-          <p>Selected: {amount} TON</p>
 
           <div className="staking-info">
-            <p>Balance: {balance} TON</p>
+            <p>Balance: {balance} GAME</p>
           </div>
 
           <button
@@ -154,9 +153,10 @@ const StakingCard = () => {
           <h1>
             <div className="input-container">
               <input
-                type="number"
+                type="text" // Change to "text" for better formatting
                 value={amount}
                 onChange={handleAmountChange}
+                inputMode="numeric" // Keep numeric input mode
                 placeholder="Enter amount"
                 min="0"
                 max={balance}
@@ -178,10 +178,9 @@ const StakingCard = () => {
               <div className="slider-thumb"></div>
             </div>
           </div>
-          <p>Selected: {amount} TON</p>
 
           <div className="staking-info">
-            <p>Balance: {balance} TON</p>
+            <p>Balance: {balance} GAME</p>
           </div>
 
           <button
