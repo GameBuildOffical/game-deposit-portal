@@ -239,7 +239,12 @@ input[type="range"] {
 }
 
 .slider-progress {
-  background: #00bbff; /* Blue progress */
+  background: linear-gradient(
+    to left,
+    #d65ff7,
+    /* Neon pink (near the slider thumb) */ #00bbff
+      /* Neon blue (transitioning to the left) */
+  );
   height: 2.785rem;
   position: absolute;
   top: 0.64rem;
@@ -247,9 +252,13 @@ input[type="range"] {
   align-items: center;
   display: flex;
   pointer-events: none;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, background-color 0.3s ease;
   width: 8%; /* Initial width at 8% */
   border-radius: 4px; /* Rounded to match inputs */
+
+  /* Neon glow effect */
+  box-shadow: 0 0 15px 5px rgba(162, 236, 202, 0.6),
+    0 0 30px rgba(0, 187, 255, 0.4);
 }
 
 .slider-thumb {
