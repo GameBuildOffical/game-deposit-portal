@@ -45,8 +45,8 @@ p {
 }
 
 .tab:checked + label {
-  background-color: #444b54; /* Slightly lighter when active */
-  color: #ffffff; /* Light text */
+  background-color: #0180ff; /* Slightly lighter when active */
+  color: #cde0bf; /* Light text */
 }
 
 .tab + label:hover {
@@ -186,7 +186,7 @@ input[type="range"] {
 .action-button {
   width: 100%; /* Full width */
   padding: 10px 0; /* Adjust padding if necessary */
-  background-color: #3a90e2; /* Keep the same background color */
+  background-color: #0180ff; /* Keep the same background color */
   color: white;
   border: none;
   cursor: pointer;

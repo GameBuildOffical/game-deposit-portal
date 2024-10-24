@@ -44,10 +44,10 @@ const wagmiAdapter = new WagmiAdapter({
 createAppKit({
   // themeMode: "dark",
   themeVariables: {
-    "--w3m-accent": "#73D2FF",
+    "--w3m-accent": "#0180ff",
     // "--w3m-color-mix": "#00BB7F",
     "--w3m-color-mix-strength": 40,
-    "--w3m-border-radius-master": ".8rem",
+    "--w3m-border-radius-master": "4px",
     "--w3m-z-index": 40,
   },
   adapters: [wagmiAdapter],
