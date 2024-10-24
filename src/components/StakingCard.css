@@ -1,0 +1,204 @@
+/* Dark Theme for the entire card */
+body {
+  font-family: "Helvetica", sans-serif;
+  background-color: #1b1f23; /* Dark background */
+  color: #cfd6e0; /* Light text for readability */
+  padding: 30px 0;
+  font-weight: 300;
+}
+
+.container {
+  margin: 0 auto;
+  display: block;
+  max-width: 800px;
+  background-color: #2b2f36; /* Dark card background */
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+}
+
+h1,
+h2,
+p {
+  color: #e4e9f0; /* Lighter text for headings */
+}
+
+.tab-wrap {
+  transition: 0.3s box-shadow ease;
+  border-radius: 6px;
+  width: 100%; /* Ensure it takes full width */
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  list-style: none;
+  background-color: #353a41; /* Dark tab background */
+  margin: 40px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.tab-wrap:hover {
+  box-shadow: 0 12px 23px rgba(0, 0, 0, 0.23), 0 10px 10px rgba(0, 0, 0, 0.19);
+}
+
+.tab {
+  display: none;
+}
+
+.tab:checked + label {
+  background-color: #444b54; /* Slightly lighter when active */
+  color: #ffffff; /* Light text */
+}
+
+.tab + label {
+  box-shadow: 0 -1px 0 #555 inset;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: #cfd6e0; /* Light gray text */
+  flex-grow: 3;
+  text-align: center;
+  background-color: #353a41;
+  transition: 0.3s background-color ease, 0.3s box-shadow ease;
+  height: 50px;
+  padding: 15px;
+}
+
+.tab + label:hover {
+  background-color: #4b535d; /* Slight hover effect */
+  box-shadow: 0 1px 0 #4b4b4b inset;
+}
+
+.tab__content {
+  padding: 20px 25px;
+  background-color: #2b2f36;
+  border-radius: 6px;
+  width: 100%; /* Match the width of the tab */
+  z-index: 100;
+  opacity: 1;
+  position: relative;
+}
+
+/* Darker Input and Button Styles */
+input[type="number"],
+input[type="range"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  background-color: #404753; /* Dark input background */
+  border: 1px solid #5b626d; /* Dark border */
+  color: #e4e9f0; /* Light text */
+  border-radius: 8px;
+}
+
+input[type="number"]:focus,
+input[type="range"]:focus {
+  border-color: #00bbff; /* Blue border on focus */
+  outline: none;
+}
+
+input[type="range"] {
+  height: 8px; /* Slim range bar */
+}
+
+.staking-info {
+  margin-top: 20px;
+  text-align: left;
+  color: #b3b8c1; /* Slightly muted text */
+}
+
+/* Button Styling */
+.action-button {
+  padding: 10px 20px;
+  background-color: #3a90e2; /* Darker blue for dark theme */
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #3278b5;
+}
+
+.max-button {
+  color: #00bbff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.max-button:hover {
+  color: #009fbb;
+}
+
+/* Slider to Match Tab Wrap Width */
+.slider {
+  --thumb-size: 2.5rem;
+  width: 100%; /* Matches tab-wrap width */
+  height: 3.125rem;
+  position: relative;
+  touch-action: none;
+}
+
+.slider input[type="range"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: #5b626d; /* Darker slider background */
+  cursor: pointer;
+  border-radius: 8px; /* Rounded slider */
+}
+
+.slider input[type="range"]::-webkit-slider-thumb {
+  opacity: 0;
+}
+
+.slider input[type="range"]::-moz-range-thumb {
+  opacity: 0;
+}
+
+.slider-progress {
+  background: #00bbff; /* Blue progress */
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  align-items: center;
+  display: flex;
+  pointer-events: none;
+  transition: width 0.3s ease;
+  width: 50%; /* Adjust dynamically via JavaScript */
+  border-radius: 8px; /* Rounded to match inputs */
+}
+
+.slider-thumb {
+  right: calc(var(--thumb-size) / 2 - 0.5rem);
+  position: absolute;
+  transform: translateX(50%);
+}
+
+.slider-thumb,
+.slider-thumb:before,
+.slider-thumb:after {
+  content: "";
+  background-color: #74bec9;
+  border-radius: 1rem;
+  width: 2px;
+  height: 1rem;
+  display: block;
+  position: absolute;
+}
+
+.slider-thumb:before {
+  right: 1rem;
+  opacity: 0.32;
+}
+
+.slider-thumb:after {
+  right: 0.5rem;
+  opacity: 0.72;
+}
