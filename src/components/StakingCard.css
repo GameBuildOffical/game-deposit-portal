@@ -46,12 +46,13 @@ p {
 
 .tab:checked + label {
   background-color: #0180ff; /* Slightly lighter when active */
-  color: #cde0bf; /* Light text */
+  color: #ffffff; /* Light text */
 }
 
 .tab + label:hover {
   background-color: #4b535d; /* Slight hover effect */
   box-shadow: 0 1px 0 #4b4b4b inset;
+  color: #ffffff; /* Light text */
 }
 
 .tab-header {
@@ -257,8 +258,8 @@ input[type="range"] {
   border-radius: 4px; /* Rounded to match inputs */
 
   /* Neon glow effect */
-  box-shadow: 0 0 15px 5px rgba(162, 236, 202, 0.6),
-    0 0 30px rgba(0, 187, 255, 0.4);
+  /* box-shadow: 0 0 15px 5px rgba(162, 236, 202, 0.6),
+    0 0 30px rgba(0, 187, 255, 0.4); */
 }
 
 .slider-thumb {
