@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./StakingCard.css";
 
 const StakingCard = () => {
   const [tab, setTab] = useState("deposit"); // Active tab: "deposit" or "withdraw"
   const [amount, setAmount] = useState(0); // Handle the deposit/withdraw amount
   const [balance, setBalance] = useState(1.1); // Example balance
-  const [staked, setStaked] = useState(0); // Example staked amount
+  const sliderInputRef = useRef(null); // Ref for slider input
+  const sliderProgressRef = useRef(null); // Ref for slider progress
 
   const handleTabChange = (selectedTab) => {
     setTab(selectedTab);
@@ -31,15 +32,26 @@ const StakingCard = () => {
   };
 
   useEffect(() => {
-    const sliderInput = document.querySelector(".slider input");
-    const sliderProgress = document.querySelector(".slider-progress");
+    const sliderInput = sliderInputRef.current;
+    const sliderProgress = sliderProgressRef.current;
 
     // Update the slider progress based on the value
     const updateSliderProgress = () => {
-      const value =
-        (sliderInput.value - sliderInput.min) /
-        (sliderInput.max - sliderInput.min);
-      sliderProgress.style.width = `${value * 100}%`;
+      const minValue = 0;
+      const maxValue = sliderInput.max;
+      const visualOffset = 0.08; // 8% offset
+
+      // Get the slider's actual value
+      let value = sliderInput.value;
+
+      // Calculate the normalized value (0 to 1 scale) for the progress bar
+      let normalizedValue = (value - minValue) / (maxValue - minValue);
+
+      // Apply the 8% offset to the visual slider progress
+      let visualProgress = normalizedValue * (1 - visualOffset) + visualOffset;
+
+      // Update the width of the progress bar
+      sliderProgress.style.width = `${visualProgress * 100}%`;
     };
 
     // Initial update
@@ -88,9 +100,10 @@ const StakingCard = () => {
           <h1>
             <div className="input-container">
               <input
-                type="number"
+                type="text" // Change to "text" for better formatting
                 value={amount}
                 onChange={handleAmountChange}
+                inputMode="numeric" // Keep numeric input mode
                 placeholder="Enter amount"
                 min="0"
                 max={balance}
@@ -100,6 +113,7 @@ const StakingCard = () => {
           </h1>
           <div className="slider">
             <input
+              ref={sliderInputRef} // Attach the ref to the slider input
               type="range"
               min="0"
               max={balance}
@@ -107,7 +121,7 @@ const StakingCard = () => {
               value={amount}
               onChange={handleAmountChange}
             />
-            <div className="slider-progress">
+            <div ref={sliderProgressRef} className="slider-progress">
               <div className="slider-thumb"></div>
             </div>
           </div>
@@ -152,6 +166,7 @@ const StakingCard = () => {
           </h1>
           <div className="slider">
             <input
+              ref={sliderInputRef} // Attach the ref to the slider input
               type="range"
               min="0"
               max={balance}
@@ -159,7 +174,7 @@ const StakingCard = () => {
               value={amount}
               onChange={handleAmountChange}
             />
-            <div className="slider-progress">
+            <div ref={sliderProgressRef} className="slider-progress">
               <div className="slider-thumb"></div>
             </div>
           </div>

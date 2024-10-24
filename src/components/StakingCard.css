@@ -50,6 +50,30 @@ p {
   box-shadow: 0 1px 0 #4b4b4b inset;
 }
 
+.tab-header {
+  display: flex; /* Use flexbox for horizontal alignment */
+  justify-content: space-between; /* Space between elements (left and right alignment) */
+  align-items: center; /* Vertically center the items */
+  width: 100%; /* Make sure it takes the full width of the container */
+  height: 5;
+}
+
+.label {
+  font-size: 16px; /* Adjust size as needed */
+  color: #e4e9f0; /* Same text color */
+}
+
+.max-button {
+  font-size: 16px; /* Adjust size as needed */
+  color: #00bbff; /* Color for the "Use MAX" button */
+  cursor: pointer;
+  text-decoration: underline; /* Underline the "Use MAX" */
+}
+
+.max-button:hover {
+  color: #009fbb; /* Hover effect for the "Use MAX" button */
+}
+
 .tab__content {
   padding: 20px 25px;
   background-color: #2b2f36;
@@ -82,6 +106,68 @@ input[type="range"]:focus {
 
 input[type="range"] {
   height: 8px; /* Slim range bar */
+}
+
+/* Input container for "in GAME" inside the input */
+.input-container {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 4.5rem; /* Space for 'in GAME' text */
+  padding-left: 1rem;
+  box-sizing: border-box;
+  background-color: #404753; /* Dark input background */
+  color: #e4e9f0; /* Light text */
+  border-radius: 8px;
+  height: 2.5rem;
+  border: none; /* Remove the border */
+  font-size: 1.2rem; /* Increase font size */
+  font-family: "Helvetica", sans-serif; /* Use Helvetica font */
+}
+
+.input-container .currency {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem; /* Make the font bigger */
+  font-family: "Helvetica", sans-serif; /* Use Helvetica font */
+  color: #e4e9f0;
+  pointer-events: none;
+}
+
+.currency-input input {
+  font-weight: inherit;
+  text-overflow: ellipsis;
+  background: 0 0;
+  border: none;
+  outline: none;
+  max-width: 100%;
+  height: 100%;
+  padding: 0;
+  line-height: 120%;
+  position: absolute;
+  left: 0;
+  overflow: hidden;
+}
+
+.currency-input .display {
+  pointer-events: none;
+  opacity: 0;
+  max-width: 100%;
+}
+
+[data-focused="true"] input,
+[data-focused="true"] .display {
+  overflow: unset;
+  max-width: unset;
+  outline: none;
+  height: 100%;
+  overflow-y: hidden;
 }
 
 .staking-info {
@@ -131,7 +217,7 @@ input[type="range"] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 100%;
+  width: 99.5%;
   background: #5b626d; /* Darker slider background */
   cursor: pointer;
   border-radius: 8px; /* Rounded slider */
@@ -155,7 +241,7 @@ input[type="range"] {
   display: flex;
   pointer-events: none;
   transition: width 0.3s ease;
-  width: 50%; /* Adjust dynamically via JavaScript */
+  width: 8%; /* Initial width at 8% */
   border-radius: 8px; /* Rounded to match inputs */
 }
 
