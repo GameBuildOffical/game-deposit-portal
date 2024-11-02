@@ -9,22 +9,36 @@ body {
 
 /* Top Bar Styles */
 .top-bar {
-  background-color: transparent; /* Transparent background */
+  background-color: transparent;
   display: flex;
-  justify-content: space-between; /* Space out the title and button group */
-  align-items: center; /* Center the items vertically */
-  padding: 15px 20px; /* Add padding for spacing */
+  justify-content: space-between;
+  padding: 10px;
+  align-items: center;
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 999; /* Ensure it stays on top */
+  z-index: 999;
 }
 
-/* Style the title in the top-bar */
-.top-bar-title {
-  font-size: 1.5rem; /* Slightly larger title */
-  font-weight: 600; /* Bold to make it stand out */
-  color: #ffffff; /* Light color to contrast with the transparent background */
+/* Align the logo and text */
+.logo-container {
+  display: flex;
+  align-items: center; /* Ensures the logo and text are aligned vertically */
+}
+
+/* Logo Style */
+.button-logo {
+  width: 30px; /* Adjust the size of the logo */
+  height: 30px;
+  margin-right: 10px; /* Adds space between the logo and text */
+  margin-left: 20px;
+}
+
+/* Brand Name Style */
+.brand-name {
+  font-size: 20px;
+  font-weight: 200;
+  color: white; /* Adjust the text color */
 }
 
 /* Button group styles */

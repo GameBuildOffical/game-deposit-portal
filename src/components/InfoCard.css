@@ -1,10 +1,18 @@
+/* Hover effect for the card */
 .info-card {
-  background-color: #2b2f36; /* Dark background to match the theme */
+  background-color: #2b2f36;
   border-radius: 8px;
   max-width: 460px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Hover state */
+.info-card:hover {
+  /* transform: translateY(-10px); Moves the card upwards */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Adds a more prominent shadow */
 }
 
 .info-card-title {
@@ -33,7 +41,7 @@
 }
 
 .text-h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: #ffffff; /* White text */
   font-weight: 700;
 }

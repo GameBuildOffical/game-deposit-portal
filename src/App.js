@@ -5,10 +5,11 @@ import InfoCard from "./components/InfoCard";
 import { createAppKit } from "@reown/appkit/react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { WagmiProvider } from "wagmi";
-import { mainnet } from "@wagmi/core/chains";
+import { mainnet, sepolia } from "@wagmi/core/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./App.css";
+import logo from "./assets/images/gamebuildlogo.png";
 
 // infura "https://mainnet.infura.io/v3/0199a0d37b5b4fc79cdd982d17c3b659"
 
@@ -29,9 +30,19 @@ const metadata = {
 // includeWalletIds:
 // //"c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
 // "e7c4d26541a7fd84dbdfa9922d3ad21e936e13a7a0e44385d44f006139e44d3b",
+// Custom RPC URL (replace with your Infura or Alchemy endpoint)
+const sepoliaWithCustomRPC = {
+  ...sepolia,
+  rpcUrls: {
+    default: {
+      http: ["https://sepolia.infura.io/v3/0199a0d37b5b4fc79cdd982d17c3b659"], // Infura
+      // or "https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_API_KEY", // Alchemy
+    },
+  },
+};
 
 // 3. Set the networks
-const networks = [mainnet];
+const networks = [sepoliaWithCustomRPC];
 
 // 4. Create Wagmi Adapter
 const wagmiAdapter = new WagmiAdapter({
@@ -46,9 +57,9 @@ createAppKit({
   themeVariables: {
     "--w3m-accent": "#0180ff",
     // "--w3m-color-mix": "#00BB7F",
-    "--w3m-color-mix-strength": 40,
-    "--w3m-border-radius-master": "4px",
-    "--w3m-z-index": 40,
+    "--w3m-color-mix-strength": 10,
+    "--w3m-border-radius-master": "40px",
+    //"--w3m-z-index": 4,
   },
   adapters: [wagmiAdapter],
   networks,
@@ -66,10 +77,11 @@ function App({ children }) {
         {children}
         {/* Top Bar */}
         <div className="top-bar">
-          <div>GameBuild</div>
+          <div className="logo-container">
+            <img src={logo} alt="logo" className="button-logo" />
+            <div className="brand-name">GameBuild</div>
+          </div>
           <div className="button-group">
-            {/* <button className="button-1">Button 1</button>
-            <button className="button-2">Button 2</button> */}
             <w3m-button balance="hide" size="md" />
           </div>
         </div>
@@ -82,6 +94,7 @@ function App({ children }) {
             <br />
             Campaigns on GameBuild TMA!
           </p>
+
           <StakingCard />
 
           {/* Info Section */}

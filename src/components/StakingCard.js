@@ -1,12 +1,50 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useAccount, useReadContract } from "wagmi";
+import { formatUnits } from "ethers"; // Import formatUnits
 import "./StakingCard.css";
+import logo from "../assets/images/gamebuildlogo.png";
+import { GAME_TOKEN_ADDRESS, GAME_STAKING_ADDRESS } from "./Contract";
+
+const TOKEN_ABI = [
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "balanceOf",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
 
 const StakingCard = () => {
+  const { address } = useAccount();
   const [tab, setTab] = useState("deposit"); // Active tab: "deposit" or "withdraw"
   const [amount, setAmount] = useState(0); // Handle the deposit/withdraw amount
-  const [balance, setBalance] = useState(1.1); // Example balance
   const sliderInputRef = useRef(null); // Ref for slider input
   const sliderProgressRef = useRef(null); // Ref for slider progress
+
+  // Fetch the user's token balance from GAME_TOKEN_ADDRESS for the Deposit tab
+  const { data: depositBalanceRaw } = useReadContract({
+    address: GAME_TOKEN_ADDRESS,
+    abi: TOKEN_ABI,
+    functionName: "balanceOf",
+    args: [address || "0x0000000000000000000000000000000000000000"],
+  });
+
+  // Fetch the user's staked balance from GAME_STAKING_ADDRESS for the Withdraw tab
+  const { data: withdrawBalanceRaw } = useReadContract({
+    address: GAME_STAKING_ADDRESS,
+    abi: TOKEN_ABI,
+    functionName: "balanceOf",
+    args: [address || "0x0000000000000000000000000000000000000000"],
+  });
+
+  // Convert raw balances to human-readable format
+  const depositBalance = depositBalanceRaw
+    ? parseFloat(formatUnits(depositBalanceRaw, 18))
+    : 0;
+  const withdrawBalance = withdrawBalanceRaw
+    ? parseFloat(formatUnits(withdrawBalanceRaw, 18))
+    : 0;
 
   const handleTabChange = (selectedTab) => {
     setTab(selectedTab);
@@ -18,7 +56,7 @@ const StakingCard = () => {
   };
 
   const handleMaxClick = () => {
-    setAmount(balance); // Use max balance
+    setAmount(tab === "deposit" ? depositBalance : withdrawBalance);
   };
 
   const handleActionClick = () => {
@@ -100,23 +138,23 @@ const StakingCard = () => {
           <h1>
             <div className="input-container">
               <input
-                type="text" // Change to "text" for better formatting
+                type="text"
                 value={amount}
                 onChange={handleAmountChange}
-                inputMode="numeric" // Keep numeric input mode
+                inputMode="numeric"
                 placeholder="Enter amount"
                 min="0"
-                max={balance}
+                max={depositBalance}
               />
               <span className="currency">in GAME</span>
             </div>
           </h1>
           <div className="slider">
             <input
-              ref={sliderInputRef} // Attach the ref to the slider input
+              ref={sliderInputRef}
               type="range"
               min="0"
-              max={balance}
+              max={depositBalance}
               step="0.01"
               value={amount}
               onChange={handleAmountChange}
@@ -127,7 +165,7 @@ const StakingCard = () => {
           </div>
 
           <div className="staking-info">
-            <p>Balance: {balance} GAME</p>
+            <p>Balance: {depositBalance} GAME</p>
           </div>
 
           <button
@@ -135,6 +173,7 @@ const StakingCard = () => {
             className="action-button"
             disabled={amount < 1}
           >
+            <img src={logo} alt="logo" className="button-logo" />
             Deposit Game Token
           </button>
         </div>
@@ -153,23 +192,23 @@ const StakingCard = () => {
           <h1>
             <div className="input-container">
               <input
-                type="text" // Change to "text" for better formatting
+                type="text"
                 value={amount}
                 onChange={handleAmountChange}
-                inputMode="numeric" // Keep numeric input mode
+                inputMode="numeric"
                 placeholder="Enter amount"
                 min="0"
-                max={balance}
+                max={withdrawBalance}
               />
               <span className="currency">in GAME</span>
             </div>
           </h1>
           <div className="slider">
             <input
-              ref={sliderInputRef} // Attach the ref to the slider input
+              ref={sliderInputRef}
               type="range"
               min="0"
-              max={balance}
+              max={withdrawBalance}
               step="0.01"
               value={amount}
               onChange={handleAmountChange}
@@ -180,7 +219,7 @@ const StakingCard = () => {
           </div>
 
           <div className="staking-info">
-            <p>Balance: {balance} GAME</p>
+            <p>Balance: {withdrawBalance} GAME</p>
           </div>
 
           <button
@@ -188,6 +227,7 @@ const StakingCard = () => {
             className="action-button"
             disabled={amount < 1}
           >
+            <img src={logo} alt="logo" className="button-logo" />
             Withdraw Game Token
           </button>
         </div>
