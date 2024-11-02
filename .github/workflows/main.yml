@@ -1,0 +1,33 @@
+name: sync-code
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Sync Project to AWS Instance
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install # This will run `yarn install`
+
+      - name: Sync code to AWS instance
+        uses: nogsantos/scp-deploy@master
+        with:
+          src: "./"  # Sync the entire project folder
+          host: ${{ vars.SSH_HOST }}
+          remote: /root/staking_portal  # Define the destination folder on AWS
+          user: ${{ vars.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
