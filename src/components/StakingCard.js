@@ -1,44 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAccount, useReadContract } from "wagmi";
-import { formatUnits } from "ethers"; // Import formatUnits
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { formatUnits, parseUnits } from "ethers";
 import "./StakingCard.css";
 import logo from "../assets/images/gamebuildlogo.png";
 import { GAME_TOKEN_ADDRESS, GAME_STAKING_ADDRESS } from "./Contract";
-
-const TOKEN_ABI = [
-  {
-    inputs: [{ internalType: "address", name: "account", type: "address" }],
-    name: "balanceOf",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-];
+import { STAKING_ABI } from "../abis/GameStakingABI";
+import { TOKEN_ABI } from "../abis/GameTokenABI";
 
 const StakingCard = () => {
   const { address } = useAccount();
-  const [tab, setTab] = useState("deposit"); // Active tab: "deposit" or "withdraw"
-  const [amount, setAmount] = useState(0); // Handle the deposit/withdraw amount
-  const sliderInputRef = useRef(null); // Ref for slider input
-  const sliderProgressRef = useRef(null); // Ref for slider progress
+  const [tab, setTab] = useState("deposit");
+  const [amount, setAmount] = useState(0);
+  const [approvalInProgress, setApprovalInProgress] = useState(false);
+  const sliderInputRef = useRef(null);
+  const sliderProgressRef = useRef(null);
 
-  // Fetch the user's token balance from GAME_TOKEN_ADDRESS for the Deposit tab
+  // Fetch balances for Deposit and Withdraw tabs
   const { data: depositBalanceRaw } = useReadContract({
     address: GAME_TOKEN_ADDRESS,
     abi: TOKEN_ABI,
     functionName: "balanceOf",
     args: [address || "0x0000000000000000000000000000000000000000"],
   });
-
-  // Fetch the user's staked balance from GAME_STAKING_ADDRESS for the Withdraw tab
   const { data: withdrawBalanceRaw } = useReadContract({
     address: GAME_STAKING_ADDRESS,
-    abi: TOKEN_ABI,
+    abi: STAKING_ABI,
     functionName: "balanceOf",
     args: [address || "0x0000000000000000000000000000000000000000"],
   });
 
-  // Convert raw balances to human-readable format
   const depositBalance = depositBalanceRaw
     ? parseFloat(formatUnits(depositBalanceRaw, 18))
     : 0;
@@ -46,13 +36,55 @@ const StakingCard = () => {
     ? parseFloat(formatUnits(withdrawBalanceRaw, 18))
     : 0;
 
+  // Approve function
+  const { write: writeApprove, isLoading: isApproving } = useWriteContract({
+    abi: TOKEN_ABI,
+    address: GAME_TOKEN_ADDRESS,
+    functionName: "approve",
+    onSuccess(data) {
+      console.log("Approval successful:", data);
+      setApprovalInProgress(false);
+      initiateStake(); // Call stake after approval
+    },
+    onError(error) {
+      console.error("Approval failed:", error);
+      setApprovalInProgress(false);
+    },
+  });
+
+  // Stake function
+  const { write: writeStake } = useWriteContract({
+    abi: STAKING_ABI,
+    address: GAME_STAKING_ADDRESS,
+    functionName: "stake",
+    onSuccess(data) {
+      console.log("Stake successful:", data);
+    },
+    onError(error) {
+      console.error("Staking failed:", error);
+    },
+  });
+
+  const initiateStake = () => {
+    console.log("Initiating staking with amount:", amount);
+    const parsedAmount = parseUnits(amount.toString(), 18);
+    if (writeStake) {
+      writeStake({ args: [parsedAmount] });
+    } else {
+      console.error("Stake function is not available.");
+    }
+  };
+
   const handleTabChange = (selectedTab) => {
     setTab(selectedTab);
-    setAmount(0); // Reset amount on tab change
+    setAmount(0);
   };
 
   const handleAmountChange = (event) => {
-    setAmount(event.target.value);
+    const value = event.target.value;
+    if (value === "" || !isNaN(value)) {
+      setAmount(value);
+    }
   };
 
   const handleMaxClick = () => {
@@ -61,8 +93,20 @@ const StakingCard = () => {
 
   const handleActionClick = () => {
     if (tab === "deposit") {
-      alert(`You have deposited ${amount} GAME.`);
-      // Logic for deposit
+      console.log("Initiating approval for staking...");
+      const parsedAmount = parseUnits(amount.toString(), 18);
+      setApprovalInProgress(true);
+
+      // Call the approve function
+      if (writeApprove) {
+        writeApprove({
+          args: [GAME_STAKING_ADDRESS, parsedAmount],
+        });
+        console.log("Approval transaction sent with amount:", amount);
+      } else {
+        console.error("Approve function is not available.");
+        setApprovalInProgress(false);
+      }
     } else {
       alert(`You have withdrawn ${amount} GAME.`);
       // Logic for withdraw
@@ -73,32 +117,18 @@ const StakingCard = () => {
     const sliderInput = sliderInputRef.current;
     const sliderProgress = sliderProgressRef.current;
 
-    // Update the slider progress based on the value
     const updateSliderProgress = () => {
       const minValue = 0;
       const maxValue = sliderInput.max;
-      const visualOffset = 0.08; // 8% offset
-
-      // Get the slider's actual value
+      const visualOffset = 0.08;
       let value = sliderInput.value;
-
-      // Calculate the normalized value (0 to 1 scale) for the progress bar
       let normalizedValue = (value - minValue) / (maxValue - minValue);
-
-      // Apply the 8% offset to the visual slider progress
       let visualProgress = normalizedValue * (1 - visualOffset) + visualOffset;
-
-      // Update the width of the progress bar
       sliderProgress.style.width = `${visualProgress * 100}%`;
     };
 
-    // Initial update
     updateSliderProgress();
-
-    // Add event listener to update the progress bar as the user changes the slider value
     sliderInput.addEventListener("input", updateSliderProgress);
-
-    // Clean up the event listener when the component unmounts
     return () => {
       sliderInput.removeEventListener("input", updateSliderProgress);
     };
@@ -126,7 +156,6 @@ const StakingCard = () => {
       />
       <label htmlFor="tab2">Withdraw</label>
 
-      {/* Deposit Content */}
       {tab === "deposit" && (
         <div className="tab__content">
           <div className="tab-header">
@@ -163,72 +192,16 @@ const StakingCard = () => {
               <div className="slider-thumb"></div>
             </div>
           </div>
-
           <div className="staking-info">
             <p>Balance: {depositBalance} GAME</p>
           </div>
-
           <button
             onClick={handleActionClick}
             className="action-button"
-            disabled={amount < 1}
+            disabled={approvalInProgress || amount < 1 || isApproving}
           >
             <img src={logo} alt="logo" className="button-logo" />
-            Deposit Game Token
-          </button>
-        </div>
-      )}
-
-      {/* Withdraw Content */}
-      {tab === "withdraw" && (
-        <div className="tab__content">
-          <div className="tab-header">
-            <p className="label">You Withdraw</p>
-            <div onClick={handleMaxClick} className="max-button">
-              Use MAX
-            </div>
-          </div>
-
-          <h1>
-            <div className="input-container">
-              <input
-                type="text"
-                value={amount}
-                onChange={handleAmountChange}
-                inputMode="numeric"
-                placeholder="Enter amount"
-                min="0"
-                max={withdrawBalance}
-              />
-              <span className="currency">in GAME</span>
-            </div>
-          </h1>
-          <div className="slider">
-            <input
-              ref={sliderInputRef}
-              type="range"
-              min="0"
-              max={withdrawBalance}
-              step="0.01"
-              value={amount}
-              onChange={handleAmountChange}
-            />
-            <div ref={sliderProgressRef} className="slider-progress">
-              <div className="slider-thumb"></div>
-            </div>
-          </div>
-
-          <div className="staking-info">
-            <p>Balance: {withdrawBalance} GAME</p>
-          </div>
-
-          <button
-            onClick={handleActionClick}
-            className="action-button"
-            disabled={amount < 1}
-          >
-            <img src={logo} alt="logo" className="button-logo" />
-            Withdraw Game Token
+            {isApproving ? "Approving..." : "Deposit Game Token"}
           </button>
         </div>
       )}
