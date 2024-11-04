@@ -17,6 +17,9 @@ const StakingCard = () => {
   const [tab, setTab] = useState("deposit");
   const [amount, setAmount] = useState(0);
   const [balanceRefreshTrigger, setBalanceRefreshTrigger] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+
   const sliderInputRef = useRef(null);
   const sliderProgressRef = useRef(null);
 
@@ -108,33 +111,30 @@ const StakingCard = () => {
   // Update balances after staking confirmation
   useEffect(() => {
     if (isStakingConfirmed) {
-      console.log("Staking transaction confirmed.");
       setBalanceRefreshTrigger((prev) => prev + 1); // Trigger balance refresh
+      setPopupMessage("Deposit completed successfully!");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 5000); // Hide popup after 10 seconds
     }
   }, [isStakingConfirmed]); // Runs only when the staking transaction is confirmed
 
   // Update balances after staking confirmation
   useEffect(() => {
     if (isWithdrawingConfirmed) {
-      console.log("Staking transaction confirmed.");
       setBalanceRefreshTrigger((prev) => prev + 1); // Trigger balance refresh
+      setPopupMessage("Withdrawal completed successfully!");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 5000); // Hide popup after 10 seconds
     }
   }, [isWithdrawingConfirmed]); // Runs only when the staking transaction is confirmed
 
   const initiateWithdraw = () => {
-    console.log("Initiating withdrawal with amount:", amount);
     if (writeWithdraw) {
       writeWithdraw({
         abi: STAKING_ABI,
         address: GAME_STAKING_ADDRESS,
         functionName: "withdraw",
         args: [parseUnits(amount.toString(), 18)],
-        onSuccess(data) {
-          console.log("Withdraw successful:", data);
-        },
-        onError(error) {
-          console.error("Withdraw failed:", error);
-        },
       });
     } else {
       console.error("Withdraw function is not available.");
@@ -142,19 +142,12 @@ const StakingCard = () => {
   };
 
   const initiateStake = () => {
-    console.log("Initiating staking with amount:", amount);
     if (writeStake) {
       writeStake({
         abi: STAKING_ABI,
         address: GAME_STAKING_ADDRESS,
         functionName: "stake",
         args: [parseUnits(amount.toString(), 18)],
-        onSuccess(data) {
-          console.log("Stake successful:", data);
-        },
-        onError(error) {
-          console.error("Staking failed:", error);
-        },
       }); // Trigger staking
     } else {
       console.error("Stake function is not available.");
@@ -186,14 +179,7 @@ const StakingCard = () => {
           address: GAME_TOKEN_ADDRESS,
           functionName: "approve",
           args: [GAME_STAKING_ADDRESS, parseUnits(amount.toString(), 18)],
-          onSuccess(data) {
-            console.log("Approval successful in onSuccess:", data);
-          },
-          onError(error) {
-            console.error("Approval failed:", error);
-          },
         }); // Trigger approval
-        console.log("Approval transaction sent with amount:", amount);
       } else {
         console.error("Approve function is not available.");
       }
@@ -225,130 +211,137 @@ const StakingCard = () => {
   }, [amount]);
 
   return (
-    <div className="tab-wrap">
-      <input
-        type="radio"
-        id="tab1"
-        name="tabGroup1"
-        className="tab"
-        checked={tab === "deposit"}
-        onChange={() => handleTabChange("deposit")}
-      />
-      <label htmlFor="tab1">Deposit</label>
+    <div>
+      <div className="tab-wrap">
+        <input
+          type="radio"
+          id="tab1"
+          name="tabGroup1"
+          className="tab"
+          checked={tab === "deposit"}
+          onChange={() => handleTabChange("deposit")}
+        />
+        <label htmlFor="tab1">Deposit</label>
 
-      <input
-        type="radio"
-        id="tab2"
-        name="tabGroup1"
-        className="tab"
-        checked={tab === "withdraw"}
-        onChange={() => handleTabChange("withdraw")}
-      />
-      <label htmlFor="tab2">Withdraw</label>
+        <input
+          type="radio"
+          id="tab2"
+          name="tabGroup1"
+          className="tab"
+          checked={tab === "withdraw"}
+          onChange={() => handleTabChange("withdraw")}
+        />
+        <label htmlFor="tab2">Withdraw</label>
 
-      {tab === "deposit" && (
-        <div className="tab__content">
-          <div className="tab-header">
-            <p className="label">You Deposit</p>
-            <div onClick={handleMaxClick} className="max-button">
-              Use MAX
+        {tab === "deposit" && (
+          <div className="tab__content">
+            <div className="tab-header">
+              <p className="label">You Deposit</p>
+              <div onClick={handleMaxClick} className="max-button">
+                Use MAX
+              </div>
             </div>
-          </div>
-          <h1>
-            <div className="input-container">
+            <h1>
+              <div className="input-container">
+                <input
+                  type="text"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  inputMode="numeric"
+                  placeholder="Enter amount"
+                  min="0"
+                  max={depositBalance}
+                />
+                <span className="currency">in GAME</span>
+              </div>
+            </h1>
+            <div className="slider">
               <input
-                type="text"
-                value={amount}
-                onChange={handleAmountChange}
-                inputMode="numeric"
-                placeholder="Enter amount"
+                ref={sliderInputRef}
+                type="range"
                 min="0"
                 max={depositBalance}
-              />
-              <span className="currency">in GAME</span>
-            </div>
-          </h1>
-          <div className="slider">
-            <input
-              ref={sliderInputRef}
-              type="range"
-              min="0"
-              max={depositBalance}
-              step="0.01"
-              value={amount}
-              onChange={handleAmountChange}
-            />
-            <div ref={sliderProgressRef} className="slider-progress">
-              <div className="slider-thumb"></div>
-            </div>
-          </div>
-          <div className="staking-info">
-            <p>Balance: {depositBalance} GAME</p>
-          </div>
-          <button
-            onClick={handleActionClick}
-            className="action-button"
-            disabled={isApprovalConfirming || isStakingConfirming || amount < 1}
-          >
-            <img src={logo} alt="logo" className="button-logo" />
-            {isApprovalConfirming
-              ? "Approving..."
-              : isStaking || isStakingConfirming
-              ? "Staking..."
-              : "Deposit Game Token"}
-          </button>
-        </div>
-      )}
-
-      {tab === "withdraw" && (
-        <div className="tab__content">
-          <div className="tab-header">
-            <p className="label">You Withdraw</p>
-            <div onClick={handleMaxClick} className="max-button">
-              Use MAX
-            </div>
-          </div>
-          <h1>
-            <div className="input-container">
-              <input
-                type="text"
+                step="0.01"
                 value={amount}
                 onChange={handleAmountChange}
-                inputMode="numeric"
-                placeholder="Enter amount"
+              />
+              <div ref={sliderProgressRef} className="slider-progress">
+                <div className="slider-thumb"></div>
+              </div>
+            </div>
+            <div className="staking-info">
+              <p>Balance: {depositBalance} GAME</p>
+            </div>
+            <button
+              onClick={handleActionClick}
+              className="action-button"
+              disabled={
+                isApprovalConfirming || isStakingConfirming || amount < 1
+              }
+            >
+              <img src={logo} alt="logo" className="button-logo" />
+              {isApprovalConfirming
+                ? "Approving..."
+                : isStaking || isStakingConfirming
+                ? "Staking..."
+                : "Deposit Game Token"}
+            </button>
+          </div>
+        )}
+
+        {tab === "withdraw" && (
+          <div className="tab__content">
+            <div className="tab-header">
+              <p className="label">You Withdraw</p>
+              <div onClick={handleMaxClick} className="max-button">
+                Use MAX
+              </div>
+            </div>
+            <h1>
+              <div className="input-container">
+                <input
+                  type="text"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  inputMode="numeric"
+                  placeholder="Enter amount"
+                  min="0"
+                  max={withdrawBalance}
+                />
+                <span className="currency">in GAME</span>
+              </div>
+            </h1>
+            <div className="slider">
+              <input
+                ref={sliderInputRef}
+                type="range"
                 min="0"
                 max={withdrawBalance}
+                step="0.01"
+                value={amount}
+                onChange={handleAmountChange}
               />
-              <span className="currency">in GAME</span>
+              <div ref={sliderProgressRef} className="slider-progress">
+                <div className="slider-thumb"></div>
+              </div>
             </div>
-          </h1>
-          <div className="slider">
-            <input
-              ref={sliderInputRef}
-              type="range"
-              min="0"
-              max={withdrawBalance}
-              step="0.01"
-              value={amount}
-              onChange={handleAmountChange}
-            />
-            <div ref={sliderProgressRef} className="slider-progress">
-              <div className="slider-thumb"></div>
+            <div className="staking-info">
+              <p>Balance: {withdrawBalance} GAME</p>
             </div>
+            <button
+              onClick={handleActionClick}
+              className="action-button"
+              disabled={isWithdrawingConfirming || amount < 1}
+            >
+              <img src={logo} alt="logo" className="button-logo" />
+              {isWithdrawingConfirming
+                ? "Withdrawing..."
+                : "Withdraw Game Token"}
+            </button>
           </div>
-          <div className="staking-info">
-            <p>Balance: {withdrawBalance} GAME</p>
-          </div>
-          <button
-            onClick={handleActionClick}
-            className="action-button"
-            disabled={isWithdrawingConfirming || amount < 1}
-          >
-            <img src={logo} alt="logo" className="button-logo" />
-            {isWithdrawingConfirming ? "Withdrawing..." : "Withdraw Game Token"}
-          </button>
-        </div>
-      )}
+        )}
+      </div>
+      {showPopup && <div className="popup-message">{popupMessage}</div>}
     </div>
   );
 };
