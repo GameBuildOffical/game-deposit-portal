@@ -283,7 +283,7 @@ const StakingCard = () => {
               {isApprovalConfirming
                 ? "Approving..."
                 : isStaking || isStakingConfirming
-                ? "Staking..."
+                ? "Making Deposit..."
                 : "Deposit Game Token"}
             </button>
           </div>

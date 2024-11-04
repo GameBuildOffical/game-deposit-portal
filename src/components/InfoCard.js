@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { formatUnits } from "viem";
 
