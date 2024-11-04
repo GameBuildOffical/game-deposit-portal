@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
 import StakingCard from "./components/StakingCard";
 import InfoCard from "./components/InfoCard";
 
@@ -72,38 +73,40 @@ createAppKit({
 
 function App({ children }) {
   return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        {/* Top Bar */}
-        <div className="top-bar">
-          <div className="logo-container">
-            <img src={logo} alt="logo" className="button-logo" />
-            <div className="brand-name">GameBuild</div>
+    <BrowserRouter basename="/staging/deposit">
+      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+          {/* Top Bar */}
+          <div className="top-bar">
+            <div className="logo-container">
+              <img src={logo} alt="logo" className="button-logo" />
+              <div className="brand-name">GameBuild</div>
+            </div>
+            <div className="button-group">
+              <w3m-button balance="hide" size="md" />
+            </div>
           </div>
-          <div className="button-group">
-            <w3m-button balance="hide" size="md" />
+
+          <div className="staking-page">
+            {/* Deposit and Withdraw Section */}
+            <h2>Deposit your GAME Token</h2>
+            <p>
+              Deposit $60,000 GAME to create
+              <br />
+              Campaigns on GameBuild TMA!
+            </p>
+
+            <StakingCard />
+
+            {/* Info Section */}
+            <section className="info-section">
+              <InfoCard />
+            </section>
           </div>
-        </div>
-
-        <div className="staking-page">
-          {/* Deposit and Withdraw Section */}
-          <h2>Deposit your GAME Token</h2>
-          <p>
-            Deposit $60,000 GAME to create
-            <br />
-            Campaigns on GameBuild TMA!
-          </p>
-
-          <StakingCard />
-
-          {/* Info Section */}
-          <section className="info-section">
-            <InfoCard />
-          </section>
-        </div>
-      </QueryClientProvider>
-    </WagmiProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </BrowserRouter>
   );
 }
 

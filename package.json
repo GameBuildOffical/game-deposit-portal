@@ -2,6 +2,7 @@
   "name": "game-staking-portal",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/staging/deposit",
   "dependencies": {
     "@reown/appkit": "^1.1.7",
     "@reown/appkit-adapter-wagmi": "^1.1.7",
@@ -16,6 +17,7 @@
     "ethers": "^6.13.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
     "react-scripts": "5.0.1",
     "viem": "^2.21.33",
     "wagmi": "^2.12.24",
