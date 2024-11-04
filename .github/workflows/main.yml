@@ -26,8 +26,8 @@ jobs:
       - name: Sync code to AWS instance
         uses: nogsantos/scp-deploy@master
         with:
-          src: "./"  # Sync the entire project folder
+          src: "./*" # Sync all files in the project folder, not the folder itself
           host: ${{ vars.SSH_HOST }}
-          remote: /root/staking_portal  # Define the destination folder on AWS
+          remote: /root/staking_portal # Define the destination folder on AWS
           user: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
