@@ -11,14 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up SSH and clear remote folder
+      - name: Set up SSH and clear remote folder (excluding node_modules)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ vars.SSH_HOST }}
           username: ${{ vars.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            rm -rf /root/staking_portal/*  # Clear all files in the target folder
+            find /root/staking_portal -mindepth 1 -not -name 'node_modules' -exec rm -rf {} +
 
       - name: Sync code to AWS instance
         uses: appleboy/scp-action@master
