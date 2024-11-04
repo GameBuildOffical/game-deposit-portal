@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { formatUnits, parseUnits } from "ethers";
 import "./StakingCard.css";
 import logo from "../assets/images/gamebuildlogo.png";
@@ -11,7 +16,7 @@ const StakingCard = () => {
   const { address } = useAccount();
   const [tab, setTab] = useState("deposit");
   const [amount, setAmount] = useState(0);
-  const [approvalInProgress, setApprovalInProgress] = useState(false);
+  const [balanceRefreshTrigger, setBalanceRefreshTrigger] = useState(0);
   const sliderInputRef = useRef(null);
   const sliderProgressRef = useRef(null);
 
@@ -21,12 +26,14 @@ const StakingCard = () => {
     abi: TOKEN_ABI,
     functionName: "balanceOf",
     args: [address || "0x0000000000000000000000000000000000000000"],
+    watch: balanceRefreshTrigger, // Triggered on balance refresh
   });
   const { data: withdrawBalanceRaw } = useReadContract({
     address: GAME_STAKING_ADDRESS,
     abi: STAKING_ABI,
     functionName: "balanceOf",
     args: [address || "0x0000000000000000000000000000000000000000"],
+    watch: balanceRefreshTrigger, // Triggered on balance refresh
   });
 
   const depositBalance = depositBalanceRaw
@@ -37,39 +44,118 @@ const StakingCard = () => {
     : 0;
 
   // Approve function
-  const { write: writeApprove, isLoading: isApproving } = useWriteContract({
-    abi: TOKEN_ABI,
-    address: GAME_TOKEN_ADDRESS,
-    functionName: "approve",
-    onSuccess(data) {
-      console.log("Approval successful:", data);
-      setApprovalInProgress(false);
-      initiateStake(); // Call stake after approval
-    },
-    onError(error) {
-      console.error("Approval failed:", error);
-      setApprovalInProgress(false);
-    },
-  });
+  const {
+    writeContract: writeApprove,
+    isPending: isApproving,
+    isSuccess: isApprovalSuccess,
+    data: approvalData,
+  } = useWriteContract();
 
   // Stake function
-  const { write: writeStake } = useWriteContract({
-    abi: STAKING_ABI,
-    address: GAME_STAKING_ADDRESS,
-    functionName: "stake",
-    onSuccess(data) {
-      console.log("Stake successful:", data);
-    },
-    onError(error) {
-      console.error("Staking failed:", error);
-    },
+  const {
+    writeContract: writeStake,
+    isPending: isStaking,
+    data: stakingData,
+  } = useWriteContract();
+
+  const {
+    writeContract: writeWithdraw,
+    isPending: isWithdrawing,
+    data: withdrawalData,
+  } = useWriteContract();
+
+  const {
+    isLoading: isWithdrawingConfirming,
+    isSuccess: isWithdrawingConfirmed,
+  } = useWaitForTransactionReceipt({
+    hash: withdrawalData,
   });
+
+  const { isLoading: isApprovalConfirming, isSuccess: isApprovalConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: approvalData,
+    });
+
+  const { isLoading: isStakingConfirming, isSuccess: isStakingConfirmed } =
+    useWaitForTransactionReceipt({
+      hash: stakingData,
+    });
+
+  useEffect(() => {
+    if (isApprovalConfirmed) {
+      initiateStake(); // Trigger staking after confirmation
+    }
+  }, [isApprovalConfirmed]); // Runs only when the approval transaction is confirmed
+
+  useEffect(() => {
+    if (isApprovalConfirmed) {
+      console.log("----- staking confirming status:", isStakingConfirming);
+    }
+  }, [isStakingConfirming]); // Runs only when the approval transaction is confirmed
+
+  useEffect(() => {
+    console.log("is approvaal confirming:", isApprovalConfirming);
+  }, [isApprovalConfirming]); // Dependency array with isSuccess to watch for changes
+
+  useEffect(() => {
+    console.log("Approval is success!", isApprovalSuccess);
+  }, [isApprovalSuccess]); // Dependency array with isSuccess to watch for changes
+
+  useEffect(() => {
+    console.log("data of approval changed:", approvalData);
+  }, [approvalData]); // Dependency array with isSuccess to watch for changes
+
+  // Update balances after staking confirmation
+  useEffect(() => {
+    if (isStakingConfirmed) {
+      console.log("Staking transaction confirmed.");
+      setBalanceRefreshTrigger((prev) => prev + 1); // Trigger balance refresh
+    }
+  }, [isStakingConfirmed]); // Runs only when the staking transaction is confirmed
+
+  // Update balances after staking confirmation
+  useEffect(() => {
+    if (isWithdrawingConfirmed) {
+      console.log("Staking transaction confirmed.");
+      setBalanceRefreshTrigger((prev) => prev + 1); // Trigger balance refresh
+    }
+  }, [isWithdrawingConfirmed]); // Runs only when the staking transaction is confirmed
+
+  const initiateWithdraw = () => {
+    console.log("Initiating withdrawal with amount:", amount);
+    if (writeWithdraw) {
+      writeWithdraw({
+        abi: STAKING_ABI,
+        address: GAME_STAKING_ADDRESS,
+        functionName: "withdraw",
+        args: [parseUnits(amount.toString(), 18)],
+        onSuccess(data) {
+          console.log("Withdraw successful:", data);
+        },
+        onError(error) {
+          console.error("Withdraw failed:", error);
+        },
+      });
+    } else {
+      console.error("Withdraw function is not available.");
+    }
+  };
 
   const initiateStake = () => {
     console.log("Initiating staking with amount:", amount);
-    const parsedAmount = parseUnits(amount.toString(), 18);
     if (writeStake) {
-      writeStake({ args: [parsedAmount] });
+      writeStake({
+        abi: STAKING_ABI,
+        address: GAME_STAKING_ADDRESS,
+        functionName: "stake",
+        args: [parseUnits(amount.toString(), 18)],
+        onSuccess(data) {
+          console.log("Stake successful:", data);
+        },
+        onError(error) {
+          console.error("Staking failed:", error);
+        },
+      }); // Trigger staking
     } else {
       console.error("Stake function is not available.");
     }
@@ -77,7 +163,7 @@ const StakingCard = () => {
 
   const handleTabChange = (selectedTab) => {
     setTab(selectedTab);
-    setAmount(0);
+    setAmount(selectedTab === "withdraw" ? withdrawBalance : 0);
   };
 
   const handleAmountChange = (event) => {
@@ -94,22 +180,26 @@ const StakingCard = () => {
   const handleActionClick = () => {
     if (tab === "deposit") {
       console.log("Initiating approval for staking...");
-      const parsedAmount = parseUnits(amount.toString(), 18);
-      setApprovalInProgress(true);
-
-      // Call the approve function
       if (writeApprove) {
         writeApprove({
-          args: [GAME_STAKING_ADDRESS, parsedAmount],
-        });
+          abi: TOKEN_ABI,
+          address: GAME_TOKEN_ADDRESS,
+          functionName: "approve",
+          args: [GAME_STAKING_ADDRESS, parseUnits(amount.toString(), 18)],
+          onSuccess(data) {
+            console.log("Approval successful in onSuccess:", data);
+          },
+          onError(error) {
+            console.error("Approval failed:", error);
+          },
+        }); // Trigger approval
         console.log("Approval transaction sent with amount:", amount);
       } else {
         console.error("Approve function is not available.");
-        setApprovalInProgress(false);
       }
-    } else {
-      alert(`You have withdrawn ${amount} GAME.`);
-      // Logic for withdraw
+    } else if (tab === "withdraw") {
+      console.log("Initiating withdrawal...");
+      initiateWithdraw(); // Call the withdraw function when tab is "withdraw"
     }
   };
 
@@ -198,10 +288,64 @@ const StakingCard = () => {
           <button
             onClick={handleActionClick}
             className="action-button"
-            disabled={approvalInProgress || amount < 1 || isApproving}
+            disabled={isApprovalConfirming || isStakingConfirming || amount < 1}
           >
             <img src={logo} alt="logo" className="button-logo" />
-            {isApproving ? "Approving..." : "Deposit Game Token"}
+            {isApprovalConfirming
+              ? "Approving..."
+              : isStaking || isStakingConfirming
+              ? "Staking..."
+              : "Deposit Game Token"}
+          </button>
+        </div>
+      )}
+
+      {tab === "withdraw" && (
+        <div className="tab__content">
+          <div className="tab-header">
+            <p className="label">You Withdraw</p>
+            <div onClick={handleMaxClick} className="max-button">
+              Use MAX
+            </div>
+          </div>
+          <h1>
+            <div className="input-container">
+              <input
+                type="text"
+                value={amount}
+                onChange={handleAmountChange}
+                inputMode="numeric"
+                placeholder="Enter amount"
+                min="0"
+                max={withdrawBalance}
+              />
+              <span className="currency">in GAME</span>
+            </div>
+          </h1>
+          <div className="slider">
+            <input
+              ref={sliderInputRef}
+              type="range"
+              min="0"
+              max={withdrawBalance}
+              step="0.01"
+              value={amount}
+              onChange={handleAmountChange}
+            />
+            <div ref={sliderProgressRef} className="slider-progress">
+              <div className="slider-thumb"></div>
+            </div>
+          </div>
+          <div className="staking-info">
+            <p>Balance: {withdrawBalance} GAME</p>
+          </div>
+          <button
+            onClick={handleActionClick}
+            className="action-button"
+            disabled={isWithdrawingConfirming || amount < 1}
+          >
+            <img src={logo} alt="logo" className="button-logo" />
+            {isWithdrawingConfirming ? "Withdrawing..." : "Withdraw Game Token"}
           </button>
         </div>
       )}
