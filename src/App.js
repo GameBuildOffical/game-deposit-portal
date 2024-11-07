@@ -67,6 +67,8 @@ createAppKit({
   projectId,
   metadata,
   features: {
+    email: false, // Disables email login
+    socials: [], // Disables all social logins
     analytics: true, // Optional - defaults to your Cloud configuration
   },
 });
