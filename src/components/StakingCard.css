@@ -209,6 +209,12 @@ input[type="range"] {
   background-color: #3278b5;
 }
 
+.action-button:disabled {
+  background-color: #4876d8; /* Light gray background */
+  cursor: not-allowed; /* Change cursor to indicate it's disabled */
+  opacity: 0.7; /* Adjust opacity for a subtle disabled look */
+}
+
 .button-logo {
   width: 20px; /* Adjust the size of the logo */
   height: 20px;
