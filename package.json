@@ -2,7 +2,7 @@
   "name": "game-staking-portal",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/staging/deposit",
+  "homepage": "/deposit",
   "dependencies": {
     "@reown/appkit": "^1.1.7",
     "@reown/appkit-adapter-wagmi": "^1.1.7",
