@@ -32,8 +32,8 @@ const metadata = {
 // //"c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
 // "e7c4d26541a7fd84dbdfa9922d3ad21e936e13a7a0e44385d44f006139e44d3b",
 // Custom RPC URL (replace with your Infura or Alchemy endpoint)
-const sepoliaWithCustomRPC = {
-  ...sepolia,
+const mainnetWithCustomRPC = {
+  ...mainnet,
   rpcUrls: {
     default: {
       http: ["https://sepolia.infura.io/v3/0199a0d37b5b4fc79cdd982d17c3b659"], // Infura
@@ -43,7 +43,7 @@ const sepoliaWithCustomRPC = {
 };
 
 // 3. Set the networks
-const networks = [sepoliaWithCustomRPC];
+const networks = [mainnetWithCustomRPC];
 
 // 4. Create Wagmi Adapter
 const wagmiAdapter = new WagmiAdapter({
@@ -75,7 +75,7 @@ createAppKit({
 
 function App({ children }) {
   return (
-    <BrowserRouter basename="/staging/deposit">
+    <BrowserRouter basename="/deposit">
       <WagmiProvider config={wagmiAdapter.wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           {children}
