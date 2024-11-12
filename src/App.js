@@ -75,7 +75,7 @@ createAppKit({
 
 function App({ children }) {
   return (
-    <BrowserRouter basename="/deposit">
+    <BrowserRouter basename="/">
       <WagmiProvider config={wagmiAdapter.wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           {children}
